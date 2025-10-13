@@ -1,0 +1,253 @@
+﻿using EngineCore.Engine.Actions.USN;
+using J2N.Text;
+using System.Buffers;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using TDSContentApp.USN.Engine.Actions.USN;
+using TDSContentApp.USN.Engine.Utils;
+using TDSNET.Engine.Actions.USN;
+
+
+namespace TDSContentApp.USN
+{
+    public class FileEntry
+    {
+        public ulong referenceNumber;
+        public ulong parentReferenceNumbher;
+        public string fileName;
+
+        public FileEntry(ulong referenceNumber, ulong parentReferenceNumbher, string fileName)
+        {
+            this.referenceNumber = referenceNumber;
+            this.parentReferenceNumbher = parentReferenceNumbher;
+            this.fileName = string.IsInterned(fileName) ?? fileName;
+        }
+    }
+
+    public class FileSys2
+    {
+
+        public NtfsUsnJournal ntfsUsnJournal;
+        public Win32Api.USN_JOURNAL_DATA usnStates;
+        public readonly string DriveName;
+        public readonly string DriveFormat;
+
+        public ConcurrentDictionary<ulong, FileEntry> files = new(-1, 10_0000);
+
+        public FileSys2(string driveName,string driveFormat)
+        {
+            this.DriveName = driveName;
+            this.DriveFormat = driveFormat;
+            ntfsUsnJournal = new NtfsUsnJournal(new DriveInfoData() { Name = this.DriveName, DriveFormat = this.DriveFormat });
+        }
+          
+        public void InitialUsn()
+        {
+            CreateJournal();
+            ntfsUsnJournal.GetNtfsVolumeAllentries(DriveName, out var usnRtnCode, files);
+        }
+
+        public string GetPath(ulong uid)
+        {
+            return GetPath(uid, null);
+        }
+
+        string GetPath(ulong uid, string path="")
+        {
+            StringBuilder sb = new StringBuilder();
+            ulong currentUid = uid;
+
+            while (currentUid != ulong.MaxValue)
+            {
+                if (!files.TryGetValue(currentUid, out FileEntry entry))
+                {
+                    return string.Empty;
+                }
+
+                if (path == null)
+                {
+                    path = entry.fileName;
+                }
+                else
+                {
+                    sb.Insert(0, $"{entry.fileName}\\");
+                }
+
+                currentUid = entry.parentReferenceNumbher;
+            }
+
+            if (path != null)
+            {
+                sb.Append(path);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 掩码
+        /// </summary>
+        private uint reasonMask = Win32Api.USN_REASON_FILE_CREATE
+                                | Win32Api.USN_REASON_FILE_DELETE
+                                | Win32Api.USN_REASON_RENAME_NEW_NAME
+                                | Win32Api.USN_REASON_DATA_TRUNCATION
+                                | Win32Api.USN_REASON_DATA_EXTEND
+                                | Win32Api.USN_REASON_DATA_OVERWRITE
+                                | Win32Api.USN_REASON_NAMED_DATA_EXTEND
+                                | Win32Api.USN_REASON_NAMED_DATA_OVERWRITE
+                                | Win32Api.USN_REASON_NAMED_DATA_TRUNCATION
+                                | Win32Api.USN_REASON_OBJECT_ID_CHANGE;
+
+
+
+        public void DoWhileFileChanges4Index(List<Win32Api.UsnEntry> usnEntries)  //筛选USN状态改变
+        {
+            for (int i = 0; i < usnEntries.Count; i++)
+            {
+                var f = usnEntries[i];
+                uint value = f.Reason & Win32Api.USN_REASON_RENAME_NEW_NAME;
+
+                if (0 != value && files.Count > 0)
+                {
+                    if (files.ContainsKey(f.ParentFileReferenceNumber))
+                    {
+                        if (files.ContainsKey(f.FileReferenceNumber))
+                        {
+                            FileEntry frn = files[f.FileReferenceNumber];
+                            frn.fileName = f.Name;
+                        }
+                        else
+                        {
+                            FileEntry frn = new FileEntry(f.FileReferenceNumber,f.ParentFileReferenceNumber,f.Name);
+                            files.TryAdd(frn.referenceNumber, frn);
+                        }
+                    }
+                     continue;
+                }
+
+                value = f.Reason & Win32Api.USN_REASON_FILE_CREATE;
+                if (0 != value)
+                {
+                    if (!files.ContainsKey(f.FileReferenceNumber) && !string.IsNullOrWhiteSpace(f.Name) && files.ContainsKey(f.ParentFileReferenceNumber))
+                    {
+                        FileEntry frn = new FileEntry(f.FileReferenceNumber, f.ParentFileReferenceNumber, f.Name);
+                        files.TryAdd(frn.referenceNumber, frn);
+                    }
+                    continue;
+                }
+
+                value = f.Reason & Win32Api.USN_REASON_FILE_DELETE;
+                if (0 != value && files.Count > 0)
+                {
+                    //Console.WriteLine($"delete {f.FileReferenceNumber} {f.Name}");
+                    if (files.ContainsKey(f.FileReferenceNumber))
+                    {
+                        files.TryRemove(f.FileReferenceNumber,out _);
+                    }
+                    continue;
+                }
+
+                //Debug.WriteLine("USN Unknown reason");
+            }
+        }
+
+
+        public List<Win32Api.UsnEntry> DoWhileFileChanges()  //筛选USN状态改变
+        {
+            try
+            {
+                if (usnStates.UsnJournalID != 0)
+                {
+                    _ = ntfsUsnJournal.GetUsnJournalEntries(usnStates, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState);
+
+                    DoWhileFileChanges4Index(usnEntries);
+
+
+                    if (SaveJournalState(newUsnState))
+                    {
+                        usnStates = newUsnState;
+                    }
+                    return usnEntries;
+                }
+            }
+            catch
+            {
+
+            }
+            return [];
+        }
+
+        
+        private void CreateJournal()
+        {
+            usnStates = new Win32Api.USN_JOURNAL_DATA();
+            if (!SaveJournalState())
+            {
+                ntfsUsnJournal.CreateUsnJournal(1000 * 1024, 16 * 1024);  //尝试重建USN
+                if (SaveJournalState())
+                {
+                }
+            }
+        }
+
+        /// <summary>
+        /// 查询并跟踪USN状态，更新后保存当前状态再继续跟踪
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private bool SaveJournalState()        //保存USN状态
+        {
+            try
+            {
+                Win32Api.USN_JOURNAL_DATA journalState = new Win32Api.USN_JOURNAL_DATA();
+                NtfsUsnJournal.UsnJournalReturnCode rtn = ntfsUsnJournal.GetUsnJournalState(ref journalState);
+                if (rtn == NtfsUsnJournal.UsnJournalReturnCode.USN_JOURNAL_SUCCESS)
+                {
+                    if (SaveJournalState(journalState))
+                    {
+                        usnStates = journalState;
+                        return true;
+                    }
+                }
+            }
+            catch {}
+            
+            return false;
+        }
+
+        /// 查询并跟踪USN状态，更新后保存当前状态再继续跟踪
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private bool SaveJournalState(Win32Api.USN_JOURNAL_DATA usnState)        //保存USN状态
+        {
+
+            try
+            {              
+                return true;
+            }
+            catch { }
+
+            return false;
+        }
+
+        /// 查询并跟踪USN状态，更新后保存当前状态再继续跟踪
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private bool LoadJournalStateFromDisk()        //保存USN状态
+        {
+
+            try
+            {              
+                return true;
+            }
+            catch { }
+
+            return false;
+        }
+    }
+}

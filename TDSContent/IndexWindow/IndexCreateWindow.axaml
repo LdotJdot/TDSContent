@@ -1,0 +1,166 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:TDSContent"
+        mc:Ignorable="d"
+        d:DesignWidth="460" d:DesignHeight="500"
+        x:Class="TDSContent.IndexCreateWindow"
+        Title="Create category"
+        Width="460"
+        Height="500"
+        MinWidth="420"
+        MinHeight="460"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        WindowState="Normal"
+        x:DataType="vm:IndexCreateModel"
+        >
+
+	<!-- Disable window decoration buttons -->
+	<Window.ExtendClientAreaToDecorationsHint>False</Window.ExtendClientAreaToDecorationsHint>
+	<Window.SystemDecorations>Full</Window.SystemDecorations>
+
+	<Design.DataContext>
+		<vm:SettingsViewModel />
+	</Design.DataContext>
+
+	<Window.Styles>
+		<Style Selector="Window">
+			<Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei UI" />
+			<Setter Property="FontSize" Value="13" />
+		</Style>
+
+		<Style Selector="TextBlock.setting-title">
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="FontWeight" Value="Bold" />
+			<Setter Property="Margin" Value="0 0 0 6" />
+		</Style>
+
+		<Style Selector="TextBlock.setting-description">
+			<Setter Property="FontSize" Value="12" />
+			<Setter Property="Foreground" Value="#FF666666" />
+			<Setter Property="Margin" Value="0 2 0 0" />
+			<Setter Property="TextWrapping" Value="Wrap" />
+		</Style>
+
+		<Style Selector="StackPanel.setting-group">
+			<Setter Property="Margin" Value="0 0 0 12" />
+		</Style>
+
+		<Style Selector="NumericUpDown">
+			<Setter Property="Width" Value="120" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="Margin" Value="0 2 0 0" />
+		</Style>
+
+		<Style Selector="ComboBox">
+			<Setter Property="Width" Value="140" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+			<Setter Property="Margin" Value="0 2 0 0" />
+		</Style>
+
+		<Style Selector="CheckBox">
+			<Setter Property="Margin" Value="0 4 0 0" />
+		</Style>
+	</Window.Styles>
+
+	<Grid Margin="16">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!-- Settings Content -->
+		<ScrollViewer Grid.Row="0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+			<StackPanel Spacing="10" Width="380">
+				
+				<!-- Folder Path Selection -->
+				<StackPanel Classes="setting-group">
+					<TextBlock Text="Index name" VerticalAlignment="Center" Classes="setting-title" />
+					<TextBlock Text="Set a unique index name for your folder." Classes="setting-description"/>
+
+					<TextBox x:Name="CategoryTextBox"
+                                 Text="{Binding Category, Mode=TwoWay}"
+                                 Grid.Column="1" Grid.Row="0"
+                                 HorizontalAlignment="Stretch"
+                                 Margin="0 2 0 0"
+                                 Watermark="Type a unique index name"
+                                 />
+					</StackPanel>
+				
+					<StackPanel Classes="setting-group">
+
+						<TextBlock Text="Folder Path" Classes="setting-title" />
+						<TextBlock Text="The files in the folder will be indexed." Classes="setting-description"
+						 Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" />
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<TextBox x:Name="FolderPathTextBox"
+                                 Text="{Binding FolderPath, Mode=TwoWay}"
+                                 Grid.Column="0"
+                                 HorizontalAlignment="Stretch"
+                                 Margin="0 2 0 0"
+                                 Watermark="Select a folder"
+                                 />
+						<Button Content="Browse"
+                                Command="{Binding BrowseFolderCommand}"
+                                Grid.Column="1"
+                                Margin="8 2 0 0"
+                                Width="75"
+                                />
+					</Grid>
+						
+				</StackPanel>
+
+				<!-- File Extensions Selection -->
+				<StackPanel Classes="setting-group">
+					<TextBlock Text="File Extensions" Classes="setting-title" />
+					<TextBlock Text="Select the file extensions currently supported" Classes="setting-description"/>
+
+					<ItemsControl x:Name="FileExtensionsItemsControl"
+								  ItemsSource="{Binding FileExtensions}"
+								  Margin="0 2 0 0">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel Orientation="Horizontal" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<CheckBox Content="{Binding Name}"
+										  IsChecked="{Binding IsSelected, Mode=TwoWay}"
+										  Margin="4" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+					
+					<CheckBox x:Name="SingleEffectCheckBox"
+								  Content="Add extensions of pain text files" Classes="setting-title"
+								  IsChecked="{Binding IsSingleEffectEnabled, Mode=TwoWay}"
+								  Margin="0 2 0 0" />
+					<TextBlock Text="Input the extensions which would be indexed as pain text" Classes="setting-description"/>
+					<TextBox x:Name="SingleEffectTextBox"
+							 Text="{Binding PainTextExtensions, Mode=TwoWay}"
+							 IsVisible="{Binding IsSingleEffectEnabled}"
+							 HorizontalAlignment="Stretch"
+							 Margin="0 2 0 0"
+							 Watermark="e.g. &quot;.json|.md|.ini|.txt.json|.ini|.txt&quot;" />
+				</StackPanel>
+
+				
+			</StackPanel>
+		</ScrollViewer>
+
+		<!-- Button Area -->
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+			<Button Content="Cancel" Width="75" Margin="0,0,8,0" Command="{Binding CancelCommand}" />
+			<Button Content="OK" Width="75" Command="{Binding SaveCommand}" />
+		</StackPanel>
+	</Grid>
+</Window>

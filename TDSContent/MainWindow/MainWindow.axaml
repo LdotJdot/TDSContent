@@ -1,0 +1,134 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TDSAot"
+        mc:Ignorable="d"
+        x:Class="TDSAot.MainWindow"
+        Title="TDSAot"
+        x:CompileBindings="True"
+        x:DataType="local:MainWindow"
+		WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+		IsVisible = "False"
+		>
+	<Window.Resources>
+		<local:HighlightTextConverter x:Key="HighlightConverter"/>
+	</Window.Resources>
+
+	<Window.Styles>
+		<Style Selector="MenuItem.green-item">
+			<Setter Property="Foreground" Value="#00BFFF"/>
+		</Style>
+	</Window.Styles>
+	
+	<Border BorderBrush="Gray" BorderThickness="1">
+
+		<DockPanel  LastChildFill="True">
+
+			<!-- 顶部区域 -->
+			<StackPanel DockPanel.Dock="Top">
+				<Grid >
+					<TextBox
+						FontSize="18"
+						x:Name="inputBox"
+						Height="40"
+						Text=""
+						Watermark="{Binding MessageData.Watermark, Mode=OneWay}"
+						TextChanged="TextChanged"
+						VerticalAlignment="Bottom"
+						Margin="5,5,5,5"
+						SelectionBrush="#C1CDCD"						
+					/>
+					<ProgressBar Height="5"  Minimum="0" Maximum="100" Value="{Binding MessageData.Progress, Mode=OneWay}" VerticalAlignment="Bottom"
+								 IsVisible="{Binding MessageData.ProgressVisible, Mode=OneWay}"
+					Margin="5,5,0,0"/>
+
+
+					<TextBlock FontSize="16" Text="{Binding MessageData.Message, Mode=OneWay}" VerticalAlignment="Center"
+						 HorizontalAlignment="Right" Margin="0,0,10,0" Foreground="#00BFFF"/>
+				</Grid>
+			</StackPanel>
+
+
+
+			<!-- 底部自适应区域 -->
+			<Grid DockPanel.Dock="Bottom">
+				<ScrollViewer x:Name="scrollViewer" HorizontalScrollBarVisibility="Auto"
+							 VerticalScrollBarVisibility="Auto">
+
+					<ListBox x:Name="fileListBox" ItemsSource="{Binding Items.DisplayedData, Mode=OneWay}" Background="Transparent"
+							 DoubleTapped="ListBox_MouseDoubleClick"
+							 KeyDown="ListBox_KeyDown"
+							 PointerReleased="ListBoxPointerRelease"
+							 SelectionMode="Multiple"
+						 >
+						<!-- 将 ContextMenu 绑定到 ListBox -->
+						<ListBox.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Add folder to index ..." Click="ShowDialog_IndexCreate"  Classes="green-item" />
+								<MenuItem Header="Delete folder from index" Click="DeleteCategoryFromIndex" Classes="green-item"/>
+								<MenuItem Header="Reindex folder" Click="Reindex" Classes="green-item"/>
+								<Separator/>
+								<MenuItem Header="Open (Enter)" Click="OpenFile"/>
+								<MenuItem Header="Open with...(Shift+Enter)" Click="OpenFileWith" IsVisible="{Binding Items.IsShowResults}"/>
+								<MenuItem Header="Open folder (Space)" Click="OpenFolder"/>
+								<MenuItem Header="Copy (Ctrl+C)" Click="Copy"/>
+								<MenuItem Header="Copy path (Ctrl+P)" Click="CopyPath"/>
+								<MenuItem Header="Delete (Del)" Click="Delete" IsVisible="{Binding Items.IsShowResults}"/>
+								<MenuItem Header="Property... (Alt+Enter)" Click="ShowProperty"/>
+								<Separator/>
+								<MenuItem Header="Refresh USN" Click="RefreshUSN"/>
+								<MenuItem Header="Option..." Click="ShowDialog_Option"/>
+							</ContextMenu>
+						</ListBox.ContextMenu>
+
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<VirtualizingStackPanel />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<Grid  ColumnDefinitions="Auto,*">
+									<Image Width="32" Height="32"
+											Source="{Binding icon, Mode=OneWay}"
+										   Stretch="Uniform"
+											 VerticalAlignment="Top"
+										   Margin="0,4,0,0"/>
+									<StackPanel Spacing="0" Grid.Column="1" VerticalAlignment="Center" Margin="6,0,0,0">
+										<Grid ColumnDefinitions="Auto,*">
+											<TextBlock
+												Text="{Binding FileName, Mode=OneWay}" FontSize="16" VerticalAlignment="Center"/>
+											<TextBlock Grid.Column="1" Text="{Binding FileInfo, Mode=OneWay}"
+													  Foreground="#888888"
+													  VerticalAlignment="Center"
+													  FontSize="12"
+													  Margin="8,0,0,0"/>
+										</Grid>
+										<TextBlock Text="{Binding FilePath, Mode=OneWay}"
+												  Foreground="#888888"
+												  FontSize="12" />
+										<TextBlock Grid.Column="1"
+												  Inlines="{Binding, 
+												  Mode=OneWay,
+												  Converter={StaticResource HighlightConverter}}"
+												  Foreground="#888888"
+												  VerticalAlignment="Center"
+												  FontSize="12"
+												  Margin="8,0,0,0"
+												  IsVisible="{Binding HasDetail}"
+												   />
+									</StackPanel>
+								</Grid>
+							</DataTemplate>						
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</ScrollViewer>
+			</Grid>
+		</DockPanel>
+	</Border>
+</Window>
