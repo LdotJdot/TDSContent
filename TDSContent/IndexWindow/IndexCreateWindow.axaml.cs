@@ -41,7 +41,8 @@ public partial class IndexCreateWindow : Window
         {
             TDSContentApplication.Instance.CheckCategoryNameExisted(svm.Category);
 
-            if(Directory.Exists(svm.FolderPath)==false) throw new Exception($"Folder [{svm.FolderPath}] not exist!");
+            if (string.IsNullOrWhiteSpace(svm.FolderPath)) throw new Exception("Folder path is empty.");
+            if (Directory.Exists(svm.FolderPath)==false) throw new Exception($"Folder [{svm.FolderPath}] not exist!");
 
             var painExts = svm.PainTextExtensions?.Trim('"').Replace(" ", "").Split('|')??[];
             var exts = svm.FileExtensions
