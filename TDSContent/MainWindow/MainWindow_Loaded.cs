@@ -88,17 +88,30 @@ namespace TDSAot
             TDSContentApplication.Instance.SetDisk(DriverUtils.GetAllFixedNtfsDrives().Select(o => (o.Name, o.DriveFormat.TrimEnd('\\'))).ToArray());
 
         }
+
         private void InitializationApplication(bool useDiskCache)
         {
-            if (useDiskCache && !TDSContentApplication.Instance.TryLoadUSNFromDickCache())
+            if (!useDiskCache)
             {
                 InitializeUSN();
             }
-
+            else
+            {
+                if (!TDSContentApplication.Instance.TryLoadUSNFromDickCache())
+                {
+                    InitializeUSN();
+                    try
+                    {
+                        TDSContentApplication.Instance.DumpUSNToDisk();  // Ö´ÐÐ»º´æ
+                    }
+                    catch (Exception ex)
+                    {
+                        Message.ShowWaringOk("Error", $"Caching failed:{ex.Message}");
+                    }
+                }
+            }
             TDSContentApplication.Instance.Initialize(true);
         }
-
-
 
         CancellationTokenSource cts;
 

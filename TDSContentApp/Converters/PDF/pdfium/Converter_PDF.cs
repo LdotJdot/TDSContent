@@ -61,7 +61,7 @@ namespace TDSContentApp.Converters
                 try
                 {
                     var text = new string(textBuffer.Select(o => (char)o).ToArray(), 0, charsExtracted);
-                    sb.Append(text);// 将 ushort 数组转换为字符串
+                    sb.AppendLine(text);// 将 ushort 数组转换为字符串
                 }
                 catch
                 {

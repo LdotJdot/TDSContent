@@ -58,9 +58,9 @@ namespace TDSAot
                     var text2= MainWindow.keyword;
                     var text3 = textSource.Slice(result.KeywordIndex + result.KeywordLength, result.ExtractStart + result.ExtractLength - (result.KeywordIndex + result.KeywordLength));
 
-                    var run1 = new Run($"... {text1.TrimStart().ToString().Replace("\r","").Replace("\n","").Replace("\t","")}");
+                    var run1 = new Run($"... {text1.TrimStart().ToString().Replace("\r\n"," ").Replace("\r","").Replace("\n","").Replace("\t","")}");
                     var run2 = new Run(text2.ToString()) { Foreground = highlightBrush };
-                    var run3=  new Run($"{text3.TrimEnd().ToString().Replace("\r", "").Replace("\n", "").Replace("\t", "")} ...");
+                    var run3=  new Run($"{text3.TrimEnd().ToString().Replace("\r\n", " ").Replace("\r", "").Replace("\n", "").Replace("\t", "")} ...");
 
                     inlines.Add(run1);
                     inlines.Add(run2);

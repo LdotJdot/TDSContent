@@ -120,7 +120,7 @@ namespace TDSContentApp.Converters
                         // Append each line to the previous lines.
                         if (!string.IsNullOrWhiteSpace(text.Text))
                         {
-                            sb.Append(text.Text);
+                            sb.AppendLine(text.Text);
                         }
                     }                 
                 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using TDSContentApp.Converters;
@@ -40,9 +41,15 @@ namespace TDSContentApp
         const string FILESYSCAHNAME = "index.cah";
         static readonly string FILESYSCACHEPATH=Path.Combine(CurrentFolder, FILESYSCAHNAME);
 
-        public void Dispose()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DumpUSNToDisk()
         {
             DiskDataCache.DumpToDisk(fileSysList, FILESYSCACHEPATH);
+
+        }
+        public void Dispose()
+        {
+            DumpUSNToDisk();
             DumpProjectsToDisk();
             projects.Dispose();
 

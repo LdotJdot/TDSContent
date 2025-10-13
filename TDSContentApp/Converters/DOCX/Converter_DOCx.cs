@@ -47,7 +47,7 @@ namespace TDSContentApp.Converters
                     {
                         if (!string.IsNullOrWhiteSpace(p.InnerText))
                         {
-                            sb.Append(p.InnerText);
+                            sb.AppendLine(p.InnerText);
                         }
                     }
 
@@ -62,7 +62,7 @@ namespace TDSContentApp.Converters
                                 {
                                     if (!string.IsNullOrWhiteSpace(p.InnerText))
                                     {
-                                        sb.Append(p.InnerText);
+                                        sb.AppendLine(p.InnerText);
                                     }
                                 }
                             }
@@ -77,7 +77,7 @@ namespace TDSContentApp.Converters
                         {
                             if (!string.IsNullOrWhiteSpace(p.InnerText))
                             {
-                                sb.Append(p.InnerText);
+                                sb.AppendLine(p.InnerText);
                             }
                         }
                     }
