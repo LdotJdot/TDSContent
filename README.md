@@ -3,6 +3,10 @@
 ## Project Introduction
 TDSContent is an open-source file content search tool developed in C# with an interface built using Avalonia. It can search file contents at millisecond-level speeds. Unlike traditional full-disk indexing tools, TDSContent requires users to specify particular folder directories and select file extensions. It then automatically creates indexes in the background and performs searches. It supports a variety of file formats, including Docx, Pptx, Json, Md, and more.
 
+![image](./results.png)
+Fast content search within files in select folder (sub-folders).
+
+![image](./addFolder.png)
 Developers can also add their own file to string Converter to support custom indexing for additional formats.
 
 ## Core Features
