@@ -1,6 +1,6 @@
 # TDSContent: Ultra-Fast File Content Search Tool
 
-## Project Introduction
+## Introduction
 TDSContent is a powerful, open-source file content search tool designed to deliver lightning-fast search results in milliseconds. Built with C# and featuring a sleek interface crafted using Avalonia, TDSContent stands out from traditional full-disk indexing tools by offering targeted and efficient searching capabilities. It is the sister project of the TDS file name search tool (https://github.com/LdotJdot/TDS), complementing its functionality by addressing the need for file content search.
 
 Unlike traditional tools that index entire disks, TDSContent allows users to specify particular folder directories and select specific file extensions. It then automatically creates indexes in the background, enabling users to quickly locate and match text within files. This targeted approach ensures that searches are both quick and accurate, making it easy to find the exact content you need.
