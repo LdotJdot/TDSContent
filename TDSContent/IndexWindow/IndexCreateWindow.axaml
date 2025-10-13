@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         d:DesignWidth="460" d:DesignHeight="500"
         x:Class="TDSContent.IndexCreateWindow"
-        Title="Create category"
+        Title="Add folder to index"
         Width="460"
         Height="500"
         MinWidth="420"
