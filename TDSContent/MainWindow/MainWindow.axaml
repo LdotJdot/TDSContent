@@ -72,9 +72,9 @@
 										  IsVisible="{Binding Items.IsShowRecords}" />
 								<MenuItem Header="Delete folder from index" Click="DeleteFolderFromIndex" Classes="green-item"
 										  IsVisible="{Binding Items.IsShowRecords}" />
-								<MenuItem Header="Reindex folder" Click="Reindex" Classes="green-item"
+								<MenuItem Header="Reindex selected folders" Click="Reindex" Classes="green-item"
 										  		  IsVisible="{Binding Items.IsShowRecords}" />
-								<MenuItem Header="Reindex file" Click="ReindexFile" Classes="green-item"
+								<MenuItem Header="Reindex selected files" Click="ReindexFile" Classes="green-item"
 										  IsVisible="{Binding Items.IsShowResults}"/>
 								<Separator/>
 								<MenuItem Header="Open (Enter)" Click="OpenFile"/>
