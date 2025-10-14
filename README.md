@@ -1,7 +1,7 @@
-# TDSContent: Ultra-Fast File Content Search Tool
-
+# TDSContent: Ultra-Fast File Full-Text Search
+  
 ## Introduction
-`TDSContent` is a powerful, open-source file content search tool designed to deliver lightning-fast search results in milliseconds. Built with `C#` based on `Lucene` engine and featuring a sleek interface crafted using `Avalonia`, TDSContent stands out from traditional full-disk indexing tools by offering targeted and efficient searching capabilities. It is the sister project of the `TDS` file name search tool (https://github.com/LdotJdot/TDS), complementing its functionality by addressing the need for file content search.
+`TDSContent` (version c1.0.2) is a powerful, open-source file content search tool designed to deliver lightning-fast search results in milliseconds. Built with `C#` based on `Lucene` engine and featuring a sleek interface crafted using `Avalonia`, TDSContent stands out from traditional full-disk indexing tools by offering targeted and efficient searching capabilities. It is the sister project of the `TDS` file name search tool (https://github.com/LdotJdot/TDS), complementing its functionality by addressing the need for file content search.
 
 Unlike traditional tools that index entire disks, TDSContent allows users to specify particular folder directories and select specific file extensions. It then automatically creates indexes in the background, enabling users to quickly locate and match text within files. This targeted approach ensures that searches are both quick and accurate, making it easy to find the exact content you need.
 
@@ -13,11 +13,11 @@ Unlike traditional tools that index entire disks, TDSContent allows users to spe
 
 ✨ Whether you’re a developer, a content creator, or a power user striving for peak efficiency, TDSContent is your ultimate ally in the quest for instant, precision file content search. Dive in and see for yourself how TDSContent transforms the way you work and unleashes your true potential.
 
-![image](./results.png)
+<img width="602" height="429" alt="image" src="https://github.com/user-attachments/assets/a1b04530-c6ab-4aed-b1b4-1f6468671344" />
 
 Fast content search within files in select folder (sub-folders).
 
-![image](./addFolder.png)
+<img width="422" height="492" alt="image" src="https://github.com/user-attachments/assets/3602b0fa-0bd5-423e-b559-3945f8190621" />
 
 Developers can also add their own file to string Converter to support custom indexing for additional formats.
 
