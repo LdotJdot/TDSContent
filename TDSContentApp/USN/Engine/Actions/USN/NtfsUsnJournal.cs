@@ -10,10 +10,10 @@ namespace TDSContentApp.USN.Engine.Actions.USN
 {
     public class NtfsUsnJournal : IDisposable
     {
-        string[] banWordsStartWith = ["~", "{"];
+        static string[] banWordsStartWith = ["~", "{"];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool EntryNameCheck(string name)
+        public static bool EntryNameCheck(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
 

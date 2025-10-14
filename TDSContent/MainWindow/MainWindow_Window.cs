@@ -119,7 +119,7 @@ namespace TDSAot
                 var currentNum = Interlocked.Read(ref current);
                 var totalNum = Interlocked.Read(ref total);
                 percent = (double)(Interlocked.Read(ref current)) / ((double)(Interlocked.Read(ref total) + 1))*100;
-                msg = $"Ë÷Òý½ø¶È:{currentNum}/{totalNum}, {percent.ToString("f2")}%";
+                msg = $"Indexing progress:{currentNum}/{totalNum}, {percent.ToString("f2")}%";
             }
             else
             {

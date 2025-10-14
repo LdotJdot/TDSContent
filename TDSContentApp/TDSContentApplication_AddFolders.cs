@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TDSContentApp.Converters;
+using TDSContentApp.USN.Engine.Actions.USN;
 using TDSContentApp.USN.Engine.Utils;
 using TDSContentApp.Utils;
 using TDSContentCore.Engine;
@@ -44,8 +45,14 @@ namespace TDSContentApp
                         {
                             try
                             {
-                                project?.eng?.IndexFile(filePath, id);
-                                if(Interlocked.Increment(ref count) % 100 == 0)
+                                var fileName = Path.GetFileName(filePath);
+
+                                if (NtfsUsnJournal.EntryNameCheck(fileName))
+                                {
+                                    project?.eng?.IndexFile(filePath, id);
+                                }
+                                
+                                if (Interlocked.Increment(ref count) % 100 == 0)
                                 {
                                     project?.eng?.Commit();
                                 }
@@ -80,6 +87,10 @@ namespace TDSContentApp
         public void AddFileEntry(string filePath)
         {
             if (!Path.Exists(filePath)) return;
+
+            var fileName = Path.GetFileName(filePath);
+
+            if (!NtfsUsnJournal.EntryNameCheck(fileName)) return;
 
             var referenceNumber = GetUSNFromPath.GetPathReferenceNumber(filePath,out _);
             var parentReferenceNumber = GetUSNFromPath.GetPathReferenceNumber(Path.GetDirectoryName(filePath) ?? string.Empty, out _);

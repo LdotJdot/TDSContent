@@ -1,17 +1,24 @@
 # TDSContent: Ultra-Fast File Full-Text Search
   
 ## Introduction
-`TDSContent` (version c1.0.2) is a powerful, open-source file content search tool designed to deliver lightning-fast search results in milliseconds. Built with `C#` based on `Lucene` engine and featuring a sleek interface crafted using `Avalonia`, TDSContent stands out from traditional full-disk indexing tools by offering targeted and efficient searching capabilities. It is the sister project of the `TDS` file name search tool (https://github.com/LdotJdot/TDS), complementing its functionality by addressing the need for file content search.
+`TDSContent` (version c1.0.3) is a powerful, open-source file content search tool designed to deliver lightning-fast search results in milliseconds. Built with `C#` based on `Lucene` engine and featuring a sleek interface crafted using `Avalonia`, TDSContent stands out from traditional full-disk indexing tools by offering targeted and efficient searching capabilities. It is the sister project of the `TDS` file name search tool (https://github.com/LdotJdot/TDS), complementing its functionality by addressing the need for file content search.
 
 Unlike traditional tools that index entire disks, TDSContent allows users to specify particular folder directories and select specific file extensions. It then automatically creates indexes in the background, enabling users to quickly locate and match text within files. This targeted approach ensures that searches are both quick and accurate, making it easy to find the exact content you need.
 
-## 💥 Key Advantages and Features:
+## 💥 Key Advantages and Features
 * **Lightning** - Fast Search Speeds: Experience millisecond - level search speeds that leave conventional tools in the dust. TDSContent delivers instant results, so you can find the exact information you need in a blink.
 * **Precision** Targeting: Unlike other tools that indiscriminately index your entire drive, TDSContent empowers you to take control. Specify the particular folder directories and select the file extensions you care about most. This focused approach ensures that your searches are hyper - efficient and tailored to your unique needs.
 * **Automatic Indexing**: Set it and forget it! TDSContent works seamlessly in the background to automatically create indexes. Once you’ve designated your target folders and extensions, the tool takes over, ensuring that your files are always ready for lightning - fast retrieval.
 * **Extensive File Format Support**: TDSContent is designed to handle a wide array of file formats, including docx, pptx, pdf, json, md, and many more. No matter what kind of documents you deal with daily, TDSContent has got your back.
 
 ✨ Whether you’re a developer, a content creator, or a power user striving for peak efficiency, TDSContent is your ultimate ally in the quest for instant, precision file content search. Dive in and see for yourself how TDSContent transforms the way you work and unleashes your true potential.
+
+## How to do?
+ Right click and add the folder to index. Browse the path and choose the file extensions. Wait for the index finished then type the keywords.
+ 
+ * If the file name and icon are incorrect, you can click "Refresh USN".
+ * If the file content not updated, you can click  "Reindex the selected files".
+ * If the results not updated, you can click "Reindex the selected folders", then program will rescan the content in the folder as new.
 
 <img width="602" height="429" alt="image" src="https://github.com/user-attachments/assets/a1b04530-c6ab-4aed-b1b4-1f6468671344" />
 

@@ -103,6 +103,39 @@ namespace TDSContentApp.ProjectManager
             }
         }
 
+        public void AddSubFolder(string driveName, ulong referenceNumber,ulong parentReferenceNumber)
+        {
+            if (projects.TryGetValue(driveName, out var collection))
+            {
+                foreach (var project in collection.Values)
+                {
+                    if (project.Contains(parentReferenceNumber))
+                    {
+                        project.Add(referenceNumber);
+                    }
+                }
+            }
+            else
+            {
+                projects[driveName] = new();
+            }
+        }
+
+        public void RemoveSubFolder(string driveName, ulong referenceNumber)
+        {
+            if (projects.TryGetValue(driveName, out var collection))
+            {
+                foreach (var project in collection.Values)
+                {
+                     project.Remove(referenceNumber);
+                }
+            }
+            else
+            {
+                projects[driveName] = new();
+            }
+        }
+
         public void Remove(string driveName, ulong referenceNumber)
         {
             if (projects.TryGetValue(driveName, out var collection))
