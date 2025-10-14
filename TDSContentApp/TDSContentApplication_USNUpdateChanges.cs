@@ -1,15 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TDSContentApp.Converters;
+﻿using System.Diagnostics;
 using TDSContentApp.USN;
-using TDSContentApp.USN.Engine.Utils;
-using TDSContentApp.Utils;
-using TDSContentCore.Engine;
 using TDSNET.Engine.Actions.USN;
 
 namespace TDSContentApp
