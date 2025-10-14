@@ -17,14 +17,10 @@ namespace TDSContentApp
     public partial class TDSContentApplication:IDisposable
     {
 
-        public void CheckCategoryNameExisted(string category)
-        {
-            projects.CheckCategoryNameExisted(category);
-        }
-        public void AddCategory(string folderPath, string categoryName,IEnumerable<string> searchPatterns,Action markAsStarted, Action<long> addTotal, Action taskIncrement, Action markAsCompleted)
+        public void AddFolderToIndex(string folderPath, IEnumerable<string> searchPatterns,Action markAsStarted, Action<long> addTotal, Action taskIncrement, Action markAsCompleted)
         {
             // There is no need to dispose the logger.
-            var logger = loggerProvider.CreateLogger($"Index-{categoryName}");
+            ILogger logger = null;
             try
             {
                 markAsStarted?.Invoke();
@@ -32,13 +28,13 @@ namespace TDSContentApp
                 if (Directory.Exists(folderPath))
                 {
 
-                    var project = projects.AddProject(folderPath, searchPatterns.ToArray(), categoryName);
-
+                    var project = projects.AddProject(folderPath, searchPatterns.ToArray());
+                    logger = loggerProvider.CreateLogger($"Index-{project.Id}");
                     var filesPath = FileHelper.GetAllFiles(folderPath, searchPatterns).ToArray();
 
                     addTotal?.Invoke(filesPath.LongLength);
 
-                    logger.LogInformation($"Index-{categoryName}");
+                    logger.LogInformation($"Index-{folderPath}");
 
                     long count = 0;
                     Parallel.ForEach(filesPath, filePath =>
@@ -81,7 +77,7 @@ namespace TDSContentApp
         }
 
         // make sure the filePath in the projects folders before call this method
-        private void AddFileEntry(string filePath)
+        public void AddFileEntry(string filePath)
         {
             if (!Path.Exists(filePath)) return;
 

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using TDSAot.State;
 using TDSAot.Utils;
 using TDSContentApp;
+using TDSContentCore;
 
 namespace TDSAot
 {
@@ -47,13 +48,13 @@ namespace TDSAot
             RefreshProgress();
         }
 
-        public async void AddCategoryToIndex(string folder, string categoryName,string[] exts)
+        public async void AddFolderToIndex(string folder, string[] exts)
         {
             try
             {
                 await Task.Run(() =>
                 {
-                    TDSContentApplication.Instance.AddCategory(folder, categoryName, exts, MarkAsStarted, AddTaskTotalCount, IncrementRunningTaskCount, MarkAsCompleted);
+                    TDSContentApplication.Instance.AddFolderToIndex(folder,  exts, MarkAsStarted, AddTaskTotalCount, IncrementRunningTaskCount, MarkAsCompleted);
                 });
                 BindIndexProjects();
             }
@@ -65,6 +66,27 @@ namespace TDSAot
 
             
       
+        private void ReindexFile(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var items = GetSelectedItems();
+
+                foreach (var item in items)
+                {
+                    if (item is FrnResult file)
+                    {
+                        TDSContentApplication.Instance.AddFileEntry(file.FilePath);
+                    }
+                }
+            }
+            finally
+            {
+                StaticState.CanBeHide = true;
+
+            }
+        }
+
         private void Reindex(object sender, RoutedEventArgs e)
         {
             try
@@ -75,14 +97,10 @@ namespace TDSAot
                 {
                     if (item is IndexProjects index)
                     {
-                        var categoryName=item.FileName;
-                        var info = TDSContentApplication.Instance.GetCategoryInfo(categoryName);
+                        var id= index.Id;
 
-                        if (info != null)
-                        {
-                            TDSContentApplication.Instance.RemoveCategory(item.FileName);
-                            AddCategoryToIndex(info.Value.path, categoryName, info.Value.exts);
-                        }
+                        TDSContentApplication.Instance.RemoveIndex(id);
+                        AddFolderToIndex(index.FilePath,index.Ext);
                     }                    
                 }
                 BindIndexProjects();
@@ -94,7 +112,7 @@ namespace TDSAot
             }
         }
 
-        private void DeleteCategoryFromIndex(object sender, RoutedEventArgs e)
+        private void DeleteFolderFromIndex(object sender, RoutedEventArgs e)
         {
             StaticState.CanBeHide = false;
             try
@@ -103,17 +121,17 @@ namespace TDSAot
 
                 foreach (var item in items)
                 {
-                    if (item != null)
+                    if (item is IndexProjects index)
                     {
-                        if (Message.ShowYesNo("Remove", $"Are you sure to remmove category [{item.FileName}]?"))
+                        if (Message.ShowYesNo("Remove", $"Are you sure to remmove folder [{item.FilePath}]?"))
                         {
 
-                            TDSContentApplication.Instance.RemoveCategory(item.FileName);
+                            TDSContentApplication.Instance.RemoveIndex(index.Id);
                         }
                     }
                     else
                     {
-                        Message.ShowWaringOk("Error", "Please select a category to remove.");
+                        Message.ShowWaringOk("Error", "Please select a folder to remove.");
                         return;
                     }
                 }

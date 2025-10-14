@@ -69,8 +69,9 @@
 						<ListBox.ContextMenu>
 							<ContextMenu>
 								<MenuItem Header="Add folder to index ..." Click="ShowDialog_IndexCreate"  Classes="green-item" />
-								<MenuItem Header="Delete folder from index" Click="DeleteCategoryFromIndex" Classes="green-item"/>
+								<MenuItem Header="Delete folder from index" Click="DeleteFolderFromIndex" Classes="green-item"/>
 								<MenuItem Header="Reindex folder" Click="Reindex" Classes="green-item"/>
+								<MenuItem Header="Reindex file" Click="ReindexFile" Classes="green-item" IsVisible="{Binding Items.IsShowResults}"/>
 								<Separator/>
 								<MenuItem Header="Open (Enter)" Click="OpenFile"/>
 								<MenuItem Header="Open with...(Shift+Enter)" Click="OpenFileWith" IsVisible="{Binding Items.IsShowResults}"/>

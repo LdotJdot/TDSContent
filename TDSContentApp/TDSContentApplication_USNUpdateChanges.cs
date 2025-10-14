@@ -43,7 +43,7 @@ namespace TDSContentApp
             }
         }
 
-        public async void UpdateUSNAsync(Action markAsStarted, Action<long> addTotal, Action taskIncrement, Action markAsCompleted)
+        public async void UpdateIndexAsync(Action markAsStarted, Action<long> addTotal, Action taskIncrement, Action markAsCompleted)
         {
             await Task.Run(() =>
             {
@@ -125,7 +125,7 @@ namespace TDSContentApp
                             else if (entry.IsFolder)
                             {
 
-                                if (!projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber))
+                                if (!projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber) && !projects.Contains(fileSys.DriveName, entry.FileReferenceNumber))
                                 {
                                     continue;
                                 }

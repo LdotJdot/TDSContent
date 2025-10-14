@@ -33,14 +33,7 @@ namespace TDSContent
                 supportedExt.Select(o => new FileExtensionItem { Name = o, IsSelected = false })
                 );
         }
-
-        string category = "";
-        public string Category
-        {
-            get => category;
-            set => this.RaiseAndSetIfChanged(ref category, value);
-        }
-
+               
 
         string folderPath  = "";
 

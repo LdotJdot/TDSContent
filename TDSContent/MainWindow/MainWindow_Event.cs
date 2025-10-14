@@ -37,7 +37,7 @@ namespace TDSAot
             }
             else if(!bufferedText.Equals(bufferedText_prev, StringComparison.OrdinalIgnoreCase))
             {
-                TDSContentApplication.Instance.UpdateUSNAsync(MarkAsStarted, AddTaskTotalCount, IncrementRunningTaskCount, MarkAsCompleted);
+                TDSContentApplication.Instance.UpdateIndexAsync(MarkAsStarted, AddTaskTotalCount, IncrementRunningTaskCount, MarkAsCompleted);
                 keyword = bufferedText;
 
                 if(runningState.gOs.CurrentCount < 1)

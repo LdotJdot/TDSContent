@@ -15,11 +15,11 @@ namespace TDSContentApp
 
     public partial class TDSContentApplication:IDisposable
     {
-        public void RemoveCategory(string category)
+        public void RemoveIndex(string id)
         {
             foreach(var projs in projects.projects.Values)
             {
-                if (projs.TryRemove(category, out var target))
+                if (projs.TryRemove(id, out var target))
                 {
                     target.Destory();
                 }

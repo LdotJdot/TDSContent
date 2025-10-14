@@ -39,8 +39,6 @@ public partial class IndexCreateWindow : Window
         var svm = (IndexCreateModel)DataContext!;
         try
         {
-            TDSContentApplication.Instance.CheckCategoryNameExisted(svm.Category);
-
             if (string.IsNullOrWhiteSpace(svm.FolderPath)) throw new Exception("Folder path is empty.");
             if (Directory.Exists(svm.FolderPath)==false) throw new Exception($"Folder [{svm.FolderPath}] not exist!");
 
@@ -51,13 +49,12 @@ public partial class IndexCreateWindow : Window
 
             if (exts.Length == 0) throw new Exception("File extension did not selected.");
 
-            if (Message.ShowYesNo("Create category confirm", 
-                $"Are you sure to create category [{svm.Category}] for folder [{svm.FolderPath}] with [{string.Join(",", exts).ToLower()}] file extentions?")
+            if (Message.ShowYesNo("Creation confirm", 
+                $"Are you sure to index the folder [{svm.FolderPath}] with [{string.Join(",", exts).ToLower()}] file extentions?")
                 )
             {
-                mainWindow.AddCategoryToIndex(
+                mainWindow.AddFolderToIndex(
                     svm.FolderPath,
-                    svm.Category,
                     exts
                     );
                 mainWindow.Topmost = MainWindow.Option.AlwaysTop;

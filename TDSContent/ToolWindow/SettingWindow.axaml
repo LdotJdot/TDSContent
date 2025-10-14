@@ -94,7 +94,7 @@
 
 						<TextBlock Text="Max Result Count:" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Margin="0,0,8,0" >
 							<ToolTip.Tip>
-								<TextBlock Text="The max count of the results from each category."/>
+								<TextBlock Text="The max count of the results from each folder."/>
 							</ToolTip.Tip>
 						</TextBlock>
 						<!-- Using custom NumericTextBox instead of NumericUpDown -->

@@ -20,7 +20,7 @@ namespace TDSAot
             {
                 foreach(var info in project.projects)
                 {
-                    list.Add(new IndexProjects(info.refNumber, project.driveName, info.ext, info.category));
+                    list.Add(new IndexProjects(info.refNumber, project.driveName, info.ext, info.id));
                 }
             }
                         
@@ -33,16 +33,18 @@ namespace TDSAot
             ulong fileReferenceNumber;
             string driverName;
             string[] ext;
-            string category;
-            public IndexProjects(ulong fileReferenceNumber, string driverName, string[] ext,string category)
+            string id;
+            public IndexProjects(ulong fileReferenceNumber, string driverName, string[] ext,string id)
             {
                 this.fileReferenceNumber = fileReferenceNumber;
                 this.driverName = driverName;
                 this.ext = ext??[];
-                this.category = category;
+                this.id = id;
             }
 
-            public string FileName=> category;
+            public string FileName=> System.IO.Path.GetFileName(FilePath);
+            public string Id=> id;
+            public string[] Ext=> ext;
 
             public string FilePath => TDSContentApplication.Instance.GetPath(driverName, fileReferenceNumber);
 

@@ -20,7 +20,7 @@ namespace TDSContentApp.ProjectManager
         internal ConcurrentDictionary<string, ConcurrentDictionary<string,Project>> projects { get; set; } = new();
 
         [JsonIgnore]
-        public (string driveName, (ulong refNumber, string[] ext, string category)[] projects)[] Info=> projects.Select(p => (p.Key, p.Value.Values.Select(v => (v.FolderReferenceNumber, v.Extents, v.Category)).ToArray())).ToArray();
+        public (string driveName, (ulong refNumber, string[] ext, string id)[] projects)[] Info=> projects.Select(p => (p.Key, p.Value.Values.Select(v => (v.FolderReferenceNumber, v.Extents, v.Id)).ToArray())).ToArray();
 
         private readonly Dictionary<string, IFileToStringConverter> _converters=new Dictionary<string, IFileToStringConverter>(StringComparer.OrdinalIgnoreCase);
 
@@ -35,20 +35,6 @@ namespace TDSContentApp.ProjectManager
             AddConverter(new Converter_PPTX());
         }
 
-        public (string driveName,ulong referenceNumber, string[] extents)? GetCategoryInfo(string category)
-        {
-            foreach(var drive in projects)
-            {
-                foreach(var project in drive.Value.Values)
-                {
-                    if (project.Category == category)
-                    {
-                        return (project.DriveName, project.FolderReferenceNumber, project.Extents);
-                    }
-                }
-            }
-            return null;
-        }
 
         public void AddConverter(IFileToStringConverter converter)
         {
@@ -72,30 +58,9 @@ namespace TDSContentApp.ProjectManager
             }
         }
 
-        public void CheckCategoryNameExisted(string category)
+      
+        public Project AddProject(string path, string[] extent)
         {
-            if(string.IsNullOrWhiteSpace(category))
-            {
-                throw new Exception("Category name cannot be empty.");
-            }
-
-            if (category.Length>256)
-            {
-                throw new Exception("The length of category name should be less than 256.");
-            }
-
-            foreach (var projs in projects.Values)
-            {
-                if (projs.ContainsKey(category))
-                {
-                    throw new Exception($"Categotry [{category}] duplication.");
-                }
-            }
-        }
-        public Project AddProject(string path, string[] extent, string category)
-        {
-            CheckCategoryNameExisted(category);
-
             if (!Directory.Exists(path))
             {
                 throw new Exception($"Folder not existed: {path}");
@@ -114,8 +79,9 @@ namespace TDSContentApp.ProjectManager
                 projects[driveName] = new ();
             }
             
-            var newProject = new Project(path, extent, category);
-            projects[driveName].TryAdd(category, newProject.Initialize(_converters));
+            var newProject = new Project(path, extent);
+            newProject.Initialize(_converters);
+            projects[driveName].TryAdd(newProject.Id, newProject.Initialize(_converters));
             return newProject;
         }
 

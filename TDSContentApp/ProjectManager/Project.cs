@@ -22,7 +22,6 @@ namespace TDSContentApp.ProjectManager
 
         public string[] Extents { get; set; } = [];
 
-        public string Category { get; set; }=string.Empty;
         public string Id { get; set; } = string.Empty;
         HashSet<ulong> folderReferenceNumbers { get; set; } = new();
 
@@ -42,9 +41,9 @@ namespace TDSContentApp.ProjectManager
             return this;
         }
 
-        public Project(string path, string[] extent,string category)
+        public Project(string path, string[] extent)
         {
-            IndexFolder(path, extent, category);
+            IndexFolder(path, extent);
         }
 
         public bool Remove(ulong folderReferenceNumber)
@@ -66,7 +65,7 @@ namespace TDSContentApp.ProjectManager
             return folderReferenceNumbers.Contains(referenceNumber);
         }
 
-        public void IndexFolder(string folderPath, string[] extent,string category)
+        public void IndexFolder(string folderPath, string[] extent)
         {
             if (Directory.Exists(folderPath))
             {
@@ -75,7 +74,6 @@ namespace TDSContentApp.ProjectManager
                 {
                     this.FolderReferenceNumber = refNum;
                     this.DriveName = Directory.GetDirectoryRoot(folderPath);                    
-                    this.Category = category;
                     this.Extents = extent;
                     this.folderReferenceNumbers = new HashSet<ulong>();
                 }

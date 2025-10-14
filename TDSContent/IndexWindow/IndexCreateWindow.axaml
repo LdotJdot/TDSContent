@@ -75,27 +75,10 @@
 		<ScrollViewer Grid.Row="0"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
-			<StackPanel Spacing="10" Width="380">
-				
-				<!-- Folder Path Selection -->
-				<StackPanel Classes="setting-group">
-					<TextBlock Text="Index name" VerticalAlignment="Center" Classes="setting-title" />
-					<TextBlock Text="Set a unique index name for your folder." Classes="setting-description"/>
-
-					<TextBox x:Name="CategoryTextBox"
-                                 Text="{Binding Category, Mode=TwoWay}"
-                                 Grid.Column="1" Grid.Row="0"
-                                 HorizontalAlignment="Stretch"
-                                 Margin="0 2 0 0"
-                                 Watermark="Type a unique index name"
-                                 />
-					</StackPanel>
-				
+			<StackPanel Spacing="10" Width="380">				
+							
 					<StackPanel Classes="setting-group">
-
 						<TextBlock Text="Folder Path" Classes="setting-title" />
-						<TextBlock Text="The files in the folder will be indexed." Classes="setting-description"
-						 Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" />
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
@@ -115,14 +98,14 @@
                                 Width="75"
                                 />
 					</Grid>
+						<TextBlock Text="The files in the folder and subfolders will be indexed." Classes="setting-description"
+						 Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" />
 						
 				</StackPanel>
 
 				<!-- File Extensions Selection -->
 				<StackPanel Classes="setting-group">
 					<TextBlock Text="File Extensions" Classes="setting-title" />
-					<TextBlock Text="Select the file extensions currently supported" Classes="setting-description"/>
-
 					<ItemsControl x:Name="FileExtensionsItemsControl"
 								  ItemsSource="{Binding FileExtensions}"
 								  Margin="0 2 0 0">
@@ -139,6 +122,7 @@
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>
+					<TextBlock Text="Select the file extensions currently supported" Classes="setting-description"/>
 					
 					<CheckBox x:Name="SingleEffectCheckBox"
 								  Content="Add extensions of pain text files" Classes="setting-title"

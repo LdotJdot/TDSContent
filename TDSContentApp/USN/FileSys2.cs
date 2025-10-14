@@ -154,23 +154,20 @@ namespace TDSContentApp.USN
             }
         }
 
-
+        readonly object _usnLock = new();
         public List<Win32Api.UsnEntry> DoWhileFileChanges()  //筛选USN状态改变
         {
             try
             {
-                if (usnStates.UsnJournalID != 0)
+                lock (_usnLock)
                 {
-                    _ = ntfsUsnJournal.GetUsnJournalEntries(usnStates, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState);
-
-                    DoWhileFileChanges4Index(usnEntries);
-
-
-                    if (SaveJournalState(newUsnState))
+                    if (usnStates.UsnJournalID != 0)
                     {
-                        usnStates = newUsnState;
+                        _ = ntfsUsnJournal.GetUsnJournalEntries(usnStates, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState);
+                        SaveJournalState(newUsnState);
+                        DoWhileFileChanges4Index(usnEntries);
+                        return usnEntries;
                     }
-                    return usnEntries;
                 }
             }
             catch
@@ -226,7 +223,8 @@ namespace TDSContentApp.USN
         {
 
             try
-            {              
+            {
+                usnStates = usnState;
                 return true;
             }
             catch { }

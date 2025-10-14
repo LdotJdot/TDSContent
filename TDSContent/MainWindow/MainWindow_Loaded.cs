@@ -111,6 +111,8 @@ namespace TDSAot
                 }
             }
             TDSContentApplication.Instance.Initialize(true);
+            TDSContentApplication.Instance.UpdateIndexAsync(MarkAsStarted, AddTaskTotalCount, IncrementRunningTaskCount, MarkAsCompleted);
+
         }
 
         CancellationTokenSource cts;
