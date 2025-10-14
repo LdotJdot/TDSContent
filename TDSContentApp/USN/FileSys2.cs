@@ -16,13 +16,13 @@ namespace TDSContentApp.USN
     public class FileEntry
     {
         public ulong referenceNumber;
-        public ulong parentReferenceNumbher;
+        public ulong parentReferenceNumber;
         public string fileName;
 
         public FileEntry(ulong referenceNumber, ulong parentReferenceNumbher, string fileName)
         {
             this.referenceNumber = referenceNumber;
-            this.parentReferenceNumbher = parentReferenceNumbher;
+            this.parentReferenceNumber = parentReferenceNumbher;
             this.fileName = string.IsInterned(fileName) ?? fileName;
         }
     }
@@ -43,7 +43,33 @@ namespace TDSContentApp.USN
             this.DriveFormat = driveFormat;
             ntfsUsnJournal = new NtfsUsnJournal(new DriveInfoData() { Name = this.DriveName, DriveFormat = this.DriveFormat });
         }
-          
+
+        public IEnumerable<FileEntry> GetSubtree( ulong rootId)
+        {
+            if (!files.TryGetValue(rootId, out FileEntry rootNode))
+            {
+                return [];
+            }
+
+            return GetSubtreeRecursive(rootNode);
+        }
+
+        private IEnumerable<FileEntry> GetSubtreeRecursive( FileEntry node)
+        {
+            yield return node;
+
+            foreach (var fileEntry in files.Values)
+            {
+                if (fileEntry.parentReferenceNumber == node.referenceNumber)
+                {
+                    foreach (var descendant in GetSubtreeRecursive(fileEntry))
+                    {
+                        yield return descendant;
+                    }
+                }
+            }
+        }
+
         public void InitialUsn()
         {
             CreateJournal();
@@ -76,7 +102,7 @@ namespace TDSContentApp.USN
                     sb.Insert(0, $"{entry.fileName}\\");
                 }
 
-                currentUid = entry.parentReferenceNumbher;
+                currentUid = entry.parentReferenceNumber;
             }
 
             if (path != null)
@@ -118,6 +144,7 @@ namespace TDSContentApp.USN
                         {
                             FileEntry frn = files[f.FileReferenceNumber];
                             frn.fileName = f.Name;
+                            frn.parentReferenceNumber = f.ParentFileReferenceNumber;
                         }
                         else
                         {

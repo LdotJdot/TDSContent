@@ -53,7 +53,7 @@ namespace TDSContentApp.USN
             foreach (var file in fileSys.files.Values)
             {
                 writer.Write(file.referenceNumber);
-                writer.Write(file.parentReferenceNumbher);
+                writer.Write(file.parentReferenceNumber);
                 writer.Write(file.fileName);
             }
             writer.Write(ENDTAG);

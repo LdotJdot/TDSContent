@@ -16,8 +16,6 @@ namespace TDSContentCore
             this.doc = doc;
         }
 
-
-
         public string FileName => Path.GetFileName(FilePath);
 
         public string FilePath => TDSContentApplication.Instance.GetPath(doc?.Get(TDSContentEngine.DRIVERNAME), doc?.Get(TDSContentEngine.FILEREFERENCENUMBER));

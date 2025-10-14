@@ -54,7 +54,6 @@ namespace TDSContentApp
                     addTotal?.Invoke(results.Count());
 
 
-
                     for (int i = 0; i < results.Count(); i++)
                     {
                         try
@@ -95,7 +94,7 @@ namespace TDSContentApp
                                     Debug.Write(" :create\r\n");
                                     AddFileEntry(fileSys.GetPath(entry.FileReferenceNumber));
                                 }
-                                else  if (
+                                else if (
                                     ((entry.Reason & Win32Api.USN_REASON_DATA_TRUNCATION) != 0)
                                     ||
                                     ((entry.Reason & Win32Api.USN_REASON_DATA_OVERWRITE) != 0)
@@ -113,8 +112,17 @@ namespace TDSContentApp
                                 }
                                 else if ((Win32Api.USN_REASON_RENAME_NEW_NAME & entry.Reason) != 0)
                                 {
-                                    AddFileEntry(fileSys.GetPath(entry.FileReferenceNumber));
-                                    Debug.Write(" :rename \r\n");
+                                    if (projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber))
+                                    {
+                                        AddFileEntry(fileSys.GetPath(entry.FileReferenceNumber));
+                                    }
+                                    else
+                                    {
+                                        // if the parent folder is not in the project, then a "move out" happened and should delete it
+                                        // LdotJdot :) 
+                                        DeleteEntry(fileSys.DriveName, entry.ParentFileReferenceNumber, entry.FileReferenceNumber);
+                                    }
+                                    Debug.Write(" :rename or moved \r\n");
                                 }
                                 else
                                 {
@@ -124,7 +132,6 @@ namespace TDSContentApp
                             }
                             else if (entry.IsFolder)
                             {
-
                                 if (!projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber) && !projects.Contains(fileSys.DriveName, entry.FileReferenceNumber))
                                 {
                                     continue;
@@ -138,6 +145,47 @@ namespace TDSContentApp
                                 else if ((entry.Reason & Win32Api.USN_REASON_FILE_CREATE) != 0)
                                 {
                                     projects.AddChildFolder(fileSys.DriveName, entry.FileReferenceNumber, entry.ParentFileReferenceNumber);
+                                }
+                                else if ((Win32Api.USN_REASON_RENAME_NEW_NAME & entry.Reason) != 0)
+                                {
+                                    if (!projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber))
+                                    {
+                                        // if the parent folder is not in the project, then a "move out" happened and should delete it
+                                        // all the files related to this folder will be removed in the Remove function
+                                        // LdotJdot :)
+                                        
+                                        projects.RemoveSubFolder(fileSys.DriveName, entry.FileReferenceNumber);
+                                        projects.Remove(fileSys.DriveName, entry.FileReferenceNumber);
+
+                                        // get all the entry from usn
+                                        foreach (var frn in fileSys.GetSubtree(entry.FileReferenceNumber))
+                                        {
+                                            DeleteEntry(fileSys.DriveName, frn.parentReferenceNumber, frn.referenceNumber);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // the folder should be treated as move in
+                                        // considering subfolder only
+                                        // LdotJdot :)
+
+                                        // get all the entry from usn
+                                        var subTree = fileSys.GetSubtree(entry.FileReferenceNumber);
+
+                                        foreach (var frn in subTree)
+                                        {
+                                            var path = fileSys.GetPath(frn.referenceNumber);
+
+                                            if (Directory.Exists(path))
+                                            {
+                                                projects.AddSubFolder(fileSys.DriveName, frn.referenceNumber, frn.parentReferenceNumber);
+                                            }
+                                            else if (File.Exists(path))
+                                            {
+                                                AddFileEntry(path);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
