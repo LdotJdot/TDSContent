@@ -68,17 +68,23 @@
 						<!-- 将 ContextMenu 绑定到 ListBox -->
 						<ListBox.ContextMenu>
 							<ContextMenu>
-								<MenuItem Header="Add folder to index ..." Click="ShowDialog_IndexCreate"  Classes="green-item" />
-								<MenuItem Header="Delete folder from index" Click="DeleteFolderFromIndex" Classes="green-item"/>
-								<MenuItem Header="Reindex folder" Click="Reindex" Classes="green-item"/>
-								<MenuItem Header="Reindex file" Click="ReindexFile" Classes="green-item" IsVisible="{Binding Items.IsShowResults}"/>
+								<MenuItem Header="Add folder to index ..." Click="ShowDialog_IndexCreate"  Classes="green-item"
+										  IsVisible="{Binding Items.IsShowRecords}" />
+								<MenuItem Header="Delete folder from index" Click="DeleteFolderFromIndex" Classes="green-item"
+										  IsVisible="{Binding Items.IsShowRecords}" />
+								<MenuItem Header="Reindex folder" Click="Reindex" Classes="green-item"
+										  		  IsVisible="{Binding Items.IsShowRecords}" />
+								<MenuItem Header="Reindex file" Click="ReindexFile" Classes="green-item"
+										  IsVisible="{Binding Items.IsShowResults}"/>
 								<Separator/>
 								<MenuItem Header="Open (Enter)" Click="OpenFile"/>
-								<MenuItem Header="Open with...(Shift+Enter)" Click="OpenFileWith" IsVisible="{Binding Items.IsShowResults}"/>
+								<MenuItem Header="Open with...(Shift+Enter)" Click="OpenFileWith"
+										  IsVisible="{Binding Items.IsShowResults}"/>
 								<MenuItem Header="Open folder (Space)" Click="OpenFolder"/>
 								<MenuItem Header="Copy (Ctrl+C)" Click="Copy"/>
 								<MenuItem Header="Copy path (Ctrl+P)" Click="CopyPath"/>
-								<MenuItem Header="Delete (Del)" Click="Delete" IsVisible="{Binding Items.IsShowResults}"/>
+								<MenuItem Header="Delete (Del)" Click="Delete"
+										  IsVisible="{Binding Items.IsShowResults}" />
 								<MenuItem Header="Property... (Alt+Enter)" Click="ShowProperty"/>
 								<Separator/>
 								<MenuItem Header="Refresh USN" Click="RefreshUSN"/>

@@ -12,11 +12,21 @@ namespace TDSAot.ViewModels
         private IEnumerable<IFrnFileOrigin> _displayedData = [];
         private int _displayCount = 100;
         private bool _isShowResults =  false;
+        private bool _isShowRecords =  false;
 
+        public bool IsShowRecords
+        {
+            get => _isShowRecords;
+            private set => this.RaiseAndSetIfChanged(ref _isShowRecords, value);
+        }
         public bool IsShowResults
         {
             get => _isShowResults;
-            private set => this.RaiseAndSetIfChanged(ref _isShowResults, value);
+            set 
+            {
+                this.RaiseAndSetIfChanged(ref _isShowResults, value);
+                IsShowRecords = !value;
+            }
         }
 
         public IEnumerable<IFrnFileOrigin> DisplayedData
