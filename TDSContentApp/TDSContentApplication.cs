@@ -47,13 +47,23 @@ namespace TDSContentApp
             DiskDataCache.DumpToDisk(fileSysList, FILESYSCACHEPATH);
 
         }
-        public void Dispose()
+
+        public void Dispose(bool dumpUSN)
         {
-            DumpUSNToDisk();
+            if(dumpUSN)
+            {
+                DumpUSNToDisk();
+            }
+
             DumpProjectsToDisk();
             projects.Dispose();
 
-            disposedValue = true;            
+            disposedValue = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);            
         }
     }
 }

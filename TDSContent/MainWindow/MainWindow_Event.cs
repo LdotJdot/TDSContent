@@ -96,7 +96,7 @@ namespace TDSAot
 
         private void OnAppClosed(object? sender, EventArgs e)
         {
-            TDSContentApplication.Instance.Dispose();
+            TDSContentApplication.Instance.Dispose(Option.UsingCache);
             _trayIcon?.Dispose();
         }
 
