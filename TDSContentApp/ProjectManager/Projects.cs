@@ -83,7 +83,7 @@ namespace TDSContentApp.ProjectManager
             
             var newProject = new Project(path, extent);
             newProject.Initialize(_converters);
-            projects[driveName].TryAdd(newProject.Id, newProject.Initialize(_converters));
+            projects[driveName].TryAdd(newProject.Id, newProject);
             return newProject;
         }
 

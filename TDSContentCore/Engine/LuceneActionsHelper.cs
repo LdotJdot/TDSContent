@@ -56,11 +56,11 @@ namespace TDSContentCore.Engine
             IndexDocument(writer, filePath,driver, uid, newContent);
         }
 
+        internal static readonly Analyzer analyzer = new SmartChineseAnalyzer(LuceneVersion.LUCENE_48);
 
         static List<string> GetKeyWords(string q)
         {
             List<string> keyworkds = new List<string>();
-            Analyzer analyzer = new SmartChineseAnalyzer(LuceneVersion.LUCENE_48);
             using (var ts = analyzer.GetTokenStream(null, q))
             {
                 ts.Reset();

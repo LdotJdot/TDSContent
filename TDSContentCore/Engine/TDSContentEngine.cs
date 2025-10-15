@@ -61,8 +61,7 @@ namespace TDSContentCore.Engine
                 IndexWriter.Unlock(_directory);
             }
 
-            var analyzer = new SmartChineseAnalyzer(LuceneVersion.LUCENE_48);
-            var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer)
+            var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, LuceneHelper.analyzer)
             {
                 OpenMode = OpenMode.CREATE_OR_APPEND,
                 RAMBufferSizeMB = 512, // 超大内存缓冲

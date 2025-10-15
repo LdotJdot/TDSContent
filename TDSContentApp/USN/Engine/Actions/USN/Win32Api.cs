@@ -1,4 +1,5 @@
 ﻿// Win32Api.cs
+using K4os.Compression.LZ4.Streams.Adapters;
 using System.Buffers;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -459,6 +460,7 @@ namespace TDSNET.Engine.Actions.USN
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct USN_JOURNAL_DATA
         {
+            public readonly static USN_JOURNAL_DATA Empty = default;
             public ulong UsnJournalID;
             public long FirstUsn;
             public long NextUsn;
@@ -466,6 +468,32 @@ namespace TDSNET.Engine.Actions.USN
             public long MaxUsn;
             public ulong MaximumSize;
             public ulong AllocationDelta;
+
+            public bool Equals(USN_JOURNAL_DATA other)
+            {
+                if(UsnJournalID!=other.UsnJournalID) 
+                    return false;
+
+                if(FirstUsn!=other.FirstUsn)
+                    return false;
+
+                if(NextUsn!=other.NextUsn)
+                    return false;
+
+                if(LowestValidUsn!=other.LowestValidUsn)
+                    return false;
+
+                if(MaxUsn!=other.MaxUsn)
+                    return false;
+
+                if(MaximumSize!=other.MaximumSize)
+                    return false;
+
+                if(AllocationDelta!=other.AllocationDelta)
+                    return false;
+
+                return true;
+            }
         }
 
         /// <summary>

@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Platform;
 using Microsoft.Win32;
 using System;
+using System.Threading.Tasks;
 using TDS.State;
 using TDSAot.Utils;
 
@@ -37,7 +38,11 @@ namespace TDSAot
 
 
             var reset = new NativeMenuItem("Refresh USN");
-            reset.Click += (s, e) =>RefreshUSN();
+            reset.Click += (s, e) =>
+            {
+                DisableController("Refreshing USN...");
+                Task.Run(RefreshUSN).ContinueWith((t) => EnableController());
+            };
 
             var about = new NativeMenuItem("About...");
             about.Click += (s, e) => Message.ShowWaringOk(AppInfomation.AboutTitle, AppInfomation.AboutInfo);

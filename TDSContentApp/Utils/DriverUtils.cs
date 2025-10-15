@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace TDSAot.Utils
+namespace TDSContentApp.Utils
 {
     internal static class DriverUtils
     {
