@@ -51,7 +51,7 @@ namespace TDSContentApp
         {
             DumpUSNToDisk();
             DumpProjectsToDisk();
-            projects.Dispose();
+            projects?.Dispose();
 
             disposedValue = true;            
         }
