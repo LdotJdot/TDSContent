@@ -24,7 +24,7 @@ Unlike traditional tools that index entire disks, TDSContent allows users to spe
 
 Fast content search within files in select folder (sub-folders).
 
-<img width="422" height="492" alt="image" src="https://github.com/user-attachments/assets/3602b0fa-0bd5-423e-b559-3945f8190621" />
+<img width="422" height="492" alt="image" src="https://github.com/user-attachments/assets/d5afbe1c-79a4-4205-adf2-cf26cb2da67f" />
 
 Developers can also add their own file to string Converter to support custom indexing for additional formats.
 
