@@ -33,6 +33,8 @@ namespace TDSContentApp.ProjectManager
             AddConverter(new Converter_DOCX());
             AddConverter(new Converter_PDF());
             AddConverter(new Converter_PPTX());
+            AddConverter(new Converter_Dwg());
+            AddConverter(new Converter_Dxf());
         }
 
 
