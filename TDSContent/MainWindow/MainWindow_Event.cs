@@ -96,8 +96,11 @@ namespace TDSAot
 
         private void OnAppClosed(object? sender, EventArgs e)
         {
-            TDSContentApplication.Instance.Dispose(Option.UsingCache);
-            _trayIcon?.Dispose();
+            if (initialFinished)
+            {
+                TDSContentApplication.Instance.Dispose(Option.UsingCache);
+                _trayIcon?.Dispose();
+            }
         }
 
         private void ListBox_KeyDown(object sender, KeyEventArgs e)
