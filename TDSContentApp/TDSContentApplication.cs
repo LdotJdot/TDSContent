@@ -42,28 +42,22 @@ namespace TDSContentApp
         static readonly string FILESYSCACHEPATH=Path.Combine(CurrentFolder, FILESYSCAHNAME);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DumpUSNToDisk()
+        public void DumpUSNToDisk(bool dumpFrnDetails)
         {
-            DiskDataCache.DumpToDisk(fileSysList, FILESYSCACHEPATH);
-
+            DiskDataCache.DumpToDisk(fileSysList, FILESYSCACHEPATH, dumpFrnDetails);
         }
 
-        public void Dispose(bool dumpUSN)
+        public void Dispose(bool dumpFrnDetails)
         {
-            if(dumpUSN)
-            {
-                DumpUSNToDisk();
-            }
-
+            DumpUSNToDisk(dumpFrnDetails);
             DumpProjectsToDisk();
             projects?.Dispose();
-
             disposedValue = true;
         }
 
         public void Dispose()
         {
-            Dispose(true);            
+            Dispose(false);            
         }
     }
 }

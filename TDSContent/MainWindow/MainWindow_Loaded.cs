@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using DocumentFormat.OpenXml.Bibliography;
 using EngineCore.Engine.Actions.USN;
 using System;
 using System.Collections;
@@ -83,31 +84,23 @@ namespace TDSAot
 #endif
         }
 
-        private void InitializeUSN()
+        private void RefreshUSN()
         {
-            TDSContentApplication.Instance.SetDisk(DriverUtils.GetAllFixedNtfsDrives().Select(o => (o.Name, o.DriveFormat.TrimEnd('\\'))).ToArray());
-
+            TDSContentApplication.Instance.RefreshUSN();
         }
 
-        private void InitializationApplication(bool useDiskCache)
+        private void InitializationApplication(bool cacheUsnDetails)
         {
-            if (!useDiskCache)
+            if (!TDSContentApplication.Instance.TryLoadUSNFromDickCache())
             {
-                InitializeUSN();
-            }
-            else
-            {
-                if (!TDSContentApplication.Instance.TryLoadUSNFromDickCache())
+                RefreshUSN();
+                try
                 {
-                    InitializeUSN();
-                    try
-                    {
-                        TDSContentApplication.Instance.DumpUSNToDisk();  // Ö´ÐÐ»º´æ
-                    }
-                    catch (Exception ex)
-                    {
-                        Message.ShowWaringOk("Error", $"Caching failed:{ex.Message}");
-                    }
+                    TDSContentApplication.Instance.DumpUSNToDisk(cacheUsnDetails);  // Ö´ÐÐ»º´æ
+                }
+                catch (Exception ex)
+                {
+                    Message.ShowWaringOk("Error", $"Caching failed:{ex.Message}");
                 }
             }
             TDSContentApplication.Instance.Initialize(true);
@@ -154,12 +147,6 @@ namespace TDSAot
                 inputBox.IsEnabled = false;
                 fileListBox.IsEnabled = false;
             });
-        }
-
-        private void RefreshUSN()
-        {
-            DisableController("Refreshing USN...");
-            Task.Run(InitializeUSN).ContinueWith((t) => EnableController());
         }
     }
 }

@@ -76,7 +76,7 @@ namespace TDSAot.State
                     var useCache = configuration.GetBool(nameof(UsingCache));
                     if (useCache == null)
                     {
-                        useCache = false;
+                        useCache = true;
                         configuration.Set(nameof(UsingCache), useCache);
                         configuration.Save();
                     }
@@ -132,7 +132,7 @@ namespace TDSAot.State
             HotKey = 192;
             ModifierKey = 2;
             HideAfterStarted = false;
-            UsingCache = false;
+            UsingCache = true;
             AutoHide = true;
             AlwaysTop = true;
             Theme = ThemeType.Default;

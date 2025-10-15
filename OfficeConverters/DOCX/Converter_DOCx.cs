@@ -25,7 +25,8 @@ namespace TDSContentApp.Converters
 
         public string Convert(string path)
         {
-            return ExtractText(path).ToString();
+            var str= ExtractText(path).ToString();
+            return str;
         }
 
         public void Dispose()

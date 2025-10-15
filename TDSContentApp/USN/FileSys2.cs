@@ -31,6 +31,7 @@ namespace TDSContentApp.USN
     {
 
         public NtfsUsnJournal ntfsUsnJournal;
+        public Win32Api.USN_JOURNAL_DATA lastUsnStates;
         public Win32Api.USN_JOURNAL_DATA usnStates;
         public readonly string DriveName;
         public readonly string DriveFormat;
@@ -73,6 +74,7 @@ namespace TDSContentApp.USN
         public void InitialUsn()
         {
             CreateJournal();
+            files.Clear();
             ntfsUsnJournal.GetNtfsVolumeAllentries(DriveName, out var usnRtnCode, files);
         }
 
@@ -190,8 +192,16 @@ namespace TDSContentApp.USN
                 {
                     if (usnStates.UsnJournalID != 0)
                     {
-                        _ = ntfsUsnJournal.GetUsnJournalEntries(usnStates, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState);
-                        SaveJournalState(newUsnState);
+                        if (lastUsnStates.Equals(Win32Api.USN_JOURNAL_DATA.Empty))
+                        {
+                            lastUsnStates = usnStates;
+                        }
+                        _ = ntfsUsnJournal.GetUsnJournalEntries(lastUsnStates, reasonMask, out List<Win32Api.UsnEntry> usnEntries, out Win32Api.USN_JOURNAL_DATA newUsnState);
+                        
+                        if (SaveJournalState(newUsnState))
+                        {
+                            lastUsnStates = newUsnState;
+                        }
                         DoWhileFileChanges4Index(usnEntries);
                         return usnEntries;
                     }
@@ -208,10 +218,10 @@ namespace TDSContentApp.USN
         private void CreateJournal()
         {
             usnStates = new Win32Api.USN_JOURNAL_DATA();
-            if (!SaveJournalState())
+            if (!SaveCurrentJournalState())
             {
                 ntfsUsnJournal.CreateUsnJournal(1000 * 1024, 16 * 1024);  //尝试重建USN
-                if (SaveJournalState())
+                if (SaveCurrentJournalState())
                 {
                 }
             }
@@ -222,7 +232,7 @@ namespace TDSContentApp.USN
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        private bool SaveJournalState()        //保存USN状态
+        private bool SaveCurrentJournalState()        //保存USN状态
         {
             try
             {
@@ -232,7 +242,6 @@ namespace TDSContentApp.USN
                 {
                     if (SaveJournalState(journalState))
                     {
-                        usnStates = journalState;
                         return true;
                     }
                 }

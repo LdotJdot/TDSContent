@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using TDSContentApp.USN;
+using TDSContentApp.Utils;
 using TDSNET.Engine.Actions.USN;
 
 namespace TDSContentApp
@@ -17,19 +19,46 @@ namespace TDSContentApp
             else
             {
                 fileSysList = res;
-                return true;
+                if (res.Sum(o => o.files.Count) == 0)
+                {                
+                    // usn已读取,但详细路径未读取
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
         }
 
-        public void SetDisk((string driveName, string driveFormat)[] driveInfo)
-        {
-            fileSysList.Clear();
 
+        public void RefreshUSN()
+        {
+
+            IEnumerable<(string driveName, string driveFormat)> driveInfo = DriverUtils.GetAllFixedNtfsDrives().Select(o => (o.Name, o.DriveFormat.TrimEnd('\\')));
+
+            // remove the removed disk
+            for (int i = fileSysList.Count - 1; i >= 0; i--)
+            {
+                if (!driveInfo.Any(o => o.driveName == fileSysList[i].DriveName))
+                {
+                    fileSysList.RemoveAt(i);
+                }
+            }
+
+            // add the unadded disk
             foreach (var drive in driveInfo)
             {
-                var fs2 = new FileSys2(drive.driveName, drive.driveFormat);
-                fs2.InitialUsn();
-                fileSysList.Add(fs2);
+                if (!fileSysList.Any(o => o.DriveName == drive.driveName))
+                {
+                    var fs2 = new FileSys2(drive.driveName, drive.driveFormat);
+                    fileSysList.Add(fs2);
+                }
+            }
+
+            foreach (var fs in fileSysList)
+            {
+                fs.InitialUsn();
             }
         }
 
@@ -42,7 +71,6 @@ namespace TDSContentApp
                 {
                     var results = fileSys.DoWhileFileChanges();
                     addTotal?.Invoke(results.Count());
-
 
                     for (int i = 0; i < results.Count(); i++)
                     {
@@ -122,6 +150,7 @@ namespace TDSContentApp
                             }
                             else if (entry.IsFolder)
                             {
+
                                 if (!projects.Contains(fileSys.DriveName, entry.ParentFileReferenceNumber) && !projects.Contains(fileSys.DriveName, entry.FileReferenceNumber))
                                 {
                                     continue;

@@ -199,7 +199,7 @@
 					<TextBlock Text="Automatically hide the window when it loses focus" Classes="setting-description" />
 					
 					<CheckBox Content="Enable disk cache" IsChecked="{Binding UsingCache}" Margin="0,8,0,0" />
-					<TextBlock Text="Use disk cache to speed up application loading process. If the icon and file display not correct frequently, please set the cache as false." Classes="setting-description" />
+					<TextBlock Text="Use disk cache to speed up initialization process on program startup. If the icon and file display not correct frequently, please set the cache false." Classes="setting-description" />
 				</StackPanel>
 
 				<!-- Interface Settings -->

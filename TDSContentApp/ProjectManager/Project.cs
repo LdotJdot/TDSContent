@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TDSContentApp.Converters;
 using TDSContentApp.USN.Engine.Utils;
@@ -23,7 +24,9 @@ namespace TDSContentApp.ProjectManager
         public string[] Extents { get; set; } = [];
 
         public string Id { get; set; } = string.Empty;
-        HashSet<ulong> folderReferenceNumbers { get; set; } = new();
+        
+        [JsonInclude]
+        internal HashSet<ulong> folderReferenceNumbers { get; set; } = new();
 
         // Constructor for deserialization
         public Project()
@@ -31,14 +34,13 @@ namespace TDSContentApp.ProjectManager
 
         }
 
-        public Project Initialize(Dictionary<string, IFileToStringConverter> _converters)
+        public void Initialize(Dictionary<string, IFileToStringConverter> _converters)
         {
             if(string.IsNullOrWhiteSpace(Id))
             {
                 Id = Guid.NewGuid().ToString("N");
             }
             eng = new TDSContentEngine($"index/{Id}/index_data", _converters);
-            return this;
         }
 
         public Project(string path, string[] extent)

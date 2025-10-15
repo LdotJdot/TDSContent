@@ -17,7 +17,7 @@ namespace TDSContentApp.USN
             if (File.Exists(path)) { File.Delete(path); }
         }
 
-        static public void DumpToDisk(List<FileSys2> fileSys,string path)
+        static public void DumpToDisk(List<FileSys2> fileSys,string path, bool dumpFrnDetails)
         {
             Discard(path);
             
@@ -28,7 +28,7 @@ namespace TDSContentApp.USN
             using var writer = new BinaryWriter(lz4s, Encoding.UTF8);
             foreach (FileSys2 file in fileSys)
             {
-                DumpToDisk(file, writer);
+                DumpToDisk(file, writer, dumpFrnDetails);
             }
             writer.Write(FINALENDTAG);
             writer.Flush();
@@ -38,7 +38,7 @@ namespace TDSContentApp.USN
         }
 
 
-        static private void DumpToDisk(FileSys2 fileSys, BinaryWriter writer)
+        static private void DumpToDisk(FileSys2 fileSys, BinaryWriter writer, bool dumpFrnDetails)
         {
             writer.Write(fileSys.DriveName);
             writer.Write(fileSys.DriveFormat);
@@ -50,11 +50,14 @@ namespace TDSContentApp.USN
             writer.Write(fileSys.usnStates.MaximumSize);
             writer.Write(fileSys.usnStates.AllocationDelta);
 
-            foreach (var file in fileSys.files.Values)
+            if (dumpFrnDetails)
             {
-                writer.Write(file.referenceNumber);
-                writer.Write(file.parentReferenceNumber);
-                writer.Write(file.fileName);
+                foreach (var file in fileSys.files.Values)
+                {
+                    writer.Write(file.referenceNumber);
+                    writer.Write(file.parentReferenceNumber);
+                    writer.Write(file.fileName);
+                }
             }
             writer.Write(ENDTAG);
         }
@@ -91,16 +94,16 @@ start:;
                 var driveFormat = reader.ReadString();
                 var fs = new FileSys2(driverName,driveFormat);
 
-                fs.usnStates.UsnJournalID = reader.ReadUInt64();
-                fs.usnStates.FirstUsn = reader.ReadInt64();
-                fs.usnStates.NextUsn = reader.ReadInt64();
-                fs.usnStates.LowestValidUsn = reader.ReadInt64();
-                fs.usnStates.MaxUsn = reader.ReadInt64();
-                fs.usnStates.MaximumSize = reader.ReadUInt64();
-                fs.usnStates.AllocationDelta = reader.ReadUInt64();
-
+                fs.lastUsnStates.UsnJournalID = reader.ReadUInt64();
+                fs.lastUsnStates.FirstUsn = reader.ReadInt64();
+                fs.lastUsnStates.NextUsn = reader.ReadInt64();
+                fs.lastUsnStates.LowestValidUsn = reader.ReadInt64();
+                fs.lastUsnStates.MaxUsn = reader.ReadInt64();
+                fs.lastUsnStates.MaximumSize = reader.ReadUInt64();
+                fs.lastUsnStates.AllocationDelta = reader.ReadUInt64();
+                fs.usnStates = fs.lastUsnStates;
                 while (true)
-                {
+                {                    
                     var nextId = reader.ReadUInt64();
                     if (nextId == ENDTAG)
                     {
