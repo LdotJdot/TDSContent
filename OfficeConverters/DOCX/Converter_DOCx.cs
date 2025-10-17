@@ -42,6 +42,14 @@ namespace TDSContentApp.Converters
                 // Assign a reference to the existing document body.  
                 Body? body = wordDocument?.MainDocumentPart?.Document?.Body;
 
+                foreach (var p in wordDocument?.MainDocumentPart?.WordprocessingCommentsPart?.Comments ?? [])
+                {
+                    if (!string.IsNullOrWhiteSpace(p.InnerText))
+                    {
+                        sb.AppendLine(p.InnerText);
+                    }
+                }
+
                 if (body != null)
                 {
                     foreach (var p in body.Elements<Paragraph>())
