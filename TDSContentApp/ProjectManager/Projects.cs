@@ -30,9 +30,10 @@ namespace TDSContentApp.ProjectManager
         public Projects()
         {
             AddConverter(new Converter_PURETXT());
-            AddConverter(new Converter_DOCX());
             AddConverter(new Converter_PDF());
+            AddConverter(new Converter_DOCX());
             AddConverter(new Converter_PPTX());
+            AddConverter(new Converter_DOCPPT());
             AddConverter(new Converter_Dwg());
             AddConverter(new Converter_Dxf());
         }
